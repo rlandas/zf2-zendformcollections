@@ -2,10 +2,12 @@
 
 namespace Product;
 
-use Product\Entity\Brand;
-use Product\Entity\Product;
+use Product\Entity\Brand as BrandEntity;
+use Product\Entity\Product as ProductEntity;
+use Product\Entity\Category as CategoryEntity;
 use Product\Table\BrandTable;
 use Product\Table\ProductTable;
+use Product\Table\CategoryTable;
 
 class Module
 {
@@ -33,12 +35,24 @@ class Module
 	{
 		return array(
 			'factories' => array(
+				'Product\Entity\Product' => function  ($sm)
+				{
+					$entity = new ProductEntity();
+
+					$brand = new BrandEntity();
+					$entity->setBrand($brand);
+
+					$category = new CategoryEntity();
+					$entity->setCategories($category);
+
+					return $entity;
+				},
 				'Product\Table\ProductTable' => function  ($sm)
 				{
 					$adapter = $sm->get('Zend\Db\Adapter\Adapter');
 					$table = new ProductTable($adapter);
 					$table->getResultSetPrototype()
-						->setArrayObjectPrototype(new Product());
+						->setArrayObjectPrototype(new ProductEntity());
 					return $table;
 				},
 				'Product\Table\BrandTable' => function  ($sm)
@@ -46,7 +60,15 @@ class Module
 					$adapter = $sm->get('Zend\Db\Adapter\Adapter');
 					$table = new BrandTable($adapter);
 					$table->getResultSetPrototype()
-						->setArrayObjectPrototype(new Brand());
+						->setArrayObjectPrototype(new BrandEntity());
+					return $table;
+				},
+				'Product\Table\CategoryTable' => function  ($sm)
+				{
+					$adapter = $sm->get('Zend\Db\Adapter\Adapter');
+					$table = new CategoryTable($adapter);
+					$table->getResultSetPrototype()
+						->setArrayObjectPrototype(new CategoryEntity());
 					return $table;
 				}
 			)

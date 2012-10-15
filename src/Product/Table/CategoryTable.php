@@ -4,7 +4,7 @@ namespace Product\Table;
 
 use App\Db\AbstractTable;
 
-class BrandTable extends AbstractTable
+class CategoryTable extends AbstractTable
 {
 
 	/**
@@ -12,19 +12,19 @@ class BrandTable extends AbstractTable
 	 *
 	 * @var string
 	 */
-	protected $table = 'brand';
+	protected $table = 'category';
 
 	/**
 	 * Primary key of the table
 	 *
 	 * @var string
 	 */
-	protected $primaryKey = 'brand_id';
+	protected $primaryKey = 'category_id';
 
 	/**
 	 * Entity class to associate with the table
 	 *
 	 * @var string
 	 */
-	protected $entityClass = 'Product\Entity\Brand';
+	protected $entityClass = 'Product\Entity\Category';
 }

@@ -29,7 +29,12 @@ class ManageController extends AbstractActionController
 				'brand' => array(
 					'name' => 'My brand ' . mt_rand(1, 200),
 					'url' => 'http://www.mybrand.com'
-				)
+				),
+				'categories' => array(
+					array('name' => 'Sony'),
+					array('name' => 'Panasonic'),
+					array('name' => 'Phillips')
+					)
 			)
 		);
 		$form->populateValues($data);
@@ -61,17 +66,22 @@ class ManageController extends AbstractActionController
 		// if data are valid, then save
 		// save the brand
 		$brandTable = $this->getBrandTable();
-		$brandTable->save($product->getBrand());
+		$brand = $brandTable->save($product->getBrand());
 		$brandId = $brandTable->getLastInsertValue();
-
-		// pass the brand_id to the product for relational db
 		$product->setBrandId($brandId);
 
 		// save the categories
+		$categoryTable = $this->getCategoryTable();
+		$categoryTable->persist($product->getCategories())->flush();
+		$categoryIds = implode(",", $categoryTable->getEntityIds());
+		$product->setCategoryIds($categoryIds);
 
 		// save the product
 		$productTable = $this->getProductTable();
-		$productTable->save($product);
+		$product = $productTable->save($product);
+
+		\Zend\Debug\Debug::dump(__METHOD__.' '.__LINE__);
+		\Zend\Debug\Debug::dump($product);
 
 		return $view;
 	}
@@ -89,29 +99,18 @@ class ManageController extends AbstractActionController
 
 		$productTable = $this->getProductTable();
 		if ($id = $this->params('id')) {
+			$product = $this->getProductTable()->getByProductId($id);
 
-			\Zend\Debug\Debug::dump(__METHOD__.' '.__LINE__);
-			\Zend\Debug\Debug::dump($id);
+			// get the brands
+			$brand = $this->getBrandTable()->getByBrandId($product->getBrandId());
+			$product->setBrand($brand);
 
+			// get the categories
+			$categoryIds = explode(",", $product->getCategories());
+			$categories = $this->getCategoryTable()->getAllByCategoryId($categoryIds);
+			$product->setCategories($categories);
 
-			/* @var $select \Zend\Db\Sql\Select */
-			$result = $productTable->select(function($select) use ($id){
-				$select->where(array('product_id = ?' => $id));
-				// \Zend\Debug\Debug::dump($select->getSqlString());
-			});
-
-
-			\Zend\Debug\Debug::dump(__METHOD__.' '.__LINE__);
-			\Zend\Debug\Debug::dump($result->current());
-		}
-
-
-		if ($this->request->isPost()) {
-			$form->setData($this->request->getPost());
-
-			if ($form->isValid()) {
-				\Zend\Debug\Debug::dump($product);
-			}
+			$form->bind($product);
 		}
 
 		return $view;
@@ -138,7 +137,13 @@ class ManageController extends AbstractActionController
 			->get('Product\Table\BrandTable');
 	}
 
+	/**
+	 *
+	 * @return \Product\Table\CategoryTable
+	 */
 	public function getCategoryTable ()
 	{
+		return $this->getServiceLocator()
+			->get('Product\Table\CategoryTable');
 	}
 }

@@ -6,6 +6,7 @@ echo $this->form()
 	->openTag($form);
 
 $product = $form->get('product');
+echo $this->formHidden($product->get('product_id'));
 echo $this->formRow($product->get('name'));
 echo $this->formRow($product->get('price'));
 echo $this->formCollection($product->get('categories'));

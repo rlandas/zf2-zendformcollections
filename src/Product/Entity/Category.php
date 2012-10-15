@@ -2,37 +2,8 @@
 
 namespace Product\Entity;
 
-class Category
+use App\Entity\AbstractEntity;
+
+class Category extends AbstractEntity
 {
-
-	/**
-	 *
-	 * @var string
-	 */
-	protected $name;
-
-	/**
-	 *
-	 * @param string $name
-	 * @return Category
-	 */
-	public function setName ($name)
-	{
-		$this->name = $name;
-		return $this;
-	}
-
-	/**
-	 *
-	 * @return string
-	 */
-	public function getName ()
-	{
-		return $this->name;
-	}
-
-	public function exchangeArray ()
-	{
-		return get_object_vars($this);
-	}
 }

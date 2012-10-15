@@ -6,6 +6,7 @@ use Product\Entity\Brand;
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
+use Zend\Stdlib\Hydrator\ArraySerializable as ArraySerializableHydrator;
 
 class BrandFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -13,7 +14,7 @@ class BrandFieldset extends Fieldset implements InputFilterProviderInterface
 	public function __construct ()
 	{
 		parent::__construct('brand');
-		$this->setHydrator(new ClassMethodsHydrator(false))
+		$this->setHydrator(new ArraySerializableHydrator())// new ClassMethodsHydrator(false))
 			->setObject(new Brand());
 
 		$this->setLabel('Brand');
