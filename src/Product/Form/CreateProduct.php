@@ -2,11 +2,8 @@
 
 namespace Product\Form;
 
-use Zend\Stdlib\Hydrator\ArraySerializable;
-
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
-use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
 use Zend\Stdlib\Hydrator\ArraySerializable as ArraySerializableHydrator;
 
 class CreateProduct extends Form
