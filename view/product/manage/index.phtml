@@ -1,2 +1,44 @@
 <?php
-\Zend\Debug\Debug::dump(__FILE__);
+$title = 'Products';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title) ?></h1>
+
+<a class="button" href="<?php echo $this->url('product', array('action'=>'add'));?>">Add new product</a>
+
+<table>
+	<thead>
+		<tr>
+		    <th>Name</th>
+		    <th>Price</th>
+		    <th>Brand</th>
+		    <th>Categories</th>
+		    <th>&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php foreach($products as $product) : ?>
+		<tr>
+		    <th scope="row"><?php echo $this->escapeHtml($product['name']) ?></th>
+		    <td><?php echo $this->escapeHtml($product['price']) ?></td>
+		    <td><?php echo $this->escapeHtml($product['brand']['name']) ?></td>
+		    <td>
+				<?php foreach ($product->categories as $category): ?>
+					<?php echo $category->name; ?><br>
+				<?php endforeach; ?>
+		    </td>
+		    <td class="tools">
+		        <a class="button" href="<?php echo $this->url('product', array('action'=>'edit', 'id' => $product['id']));?>">Edit</a>
+		    </td>
+		</tr>
+		<?php endforeach; ?>
+	</tbody>
+
+	<tfoot class="no-border">
+		<tr>
+			<td colspan="5">
+				<?php // echo $this->paginationControl($this->paginator, 'Sliding', 'application/html/pagination', array('route' => 'geo/suburb/page')); ?>
+			</td>
+		</tr>
+	</tfoot>
+</table>

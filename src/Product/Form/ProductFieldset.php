@@ -18,15 +18,15 @@ class ProductFieldset extends Fieldset implements InputFilterProviderInterface
 			->setObject(new Product());
 
 		// product_id
-// 		$this->add(array(
-// 			'name' => 'product_id',
-// 			'options' => array(
-// 				'label' => 'Product ID'
-// 			),
-// 			'attributes' => array(
-// 				'required' => 'required'
-// 			)
-// 		));
+		$this->add(array(
+			'name' => 'product_id',
+			'options' => array(
+				'label' => 'Product ID'
+			),
+			'attributes' => array(
+				'required' => 'required'
+			)
+		));
 
 		$this->add(array(
 			'name' => 'name',

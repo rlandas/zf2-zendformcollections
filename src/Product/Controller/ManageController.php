@@ -3,7 +3,7 @@
 namespace Product\Controller;
 
 use Product\Table\ProductTable;
-use Product\Entity\Product;
+use Product\Entity\Product as ProductEntity;
 use Product\Form\CreateProduct;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Http\PhpEnvironment\Response;
@@ -14,12 +14,30 @@ class ManageController extends AbstractActionController
 
 	public function indexAction ()
 	{
+		$product = $this->getProductTable();
+		$products = $product->getAllOrderByName();
+
+		$view = new ViewModel();
+		$view->setVariable('products', $products);
+		return $view;
+	}
+
+	public function viewAction ()
+	{
+		if ($id = $this->params('id')) {
+			$product = $this->getProductTable()
+				->getByProductId($id);
+		}
+
+		$view = new ViewModel();
+		$view->setVariable('product', $product);
+		return $view;
 	}
 
 	public function addAction ()
 	{
 		$form = new CreateProduct();
-		$product = new Product();
+		$product = $this->getServiceLocator()->get('Product\Entity\Product');
 		$form->bind($product);
 
 		$data = array(
@@ -65,8 +83,9 @@ class ManageController extends AbstractActionController
 
 		// if data are valid, then save
 		// save the brand
+		$brand = $product->getBrand();
 		$brandTable = $this->getBrandTable();
-		$brand = $brandTable->save($product->getBrand());
+		$brand = $brandTable->save($brand);
 		$brandId = $brandTable->getLastInsertValue();
 		$product->setBrandId($brandId);
 
@@ -80,16 +99,14 @@ class ManageController extends AbstractActionController
 		$productTable = $this->getProductTable();
 		$product = $productTable->save($product);
 
-		\Zend\Debug\Debug::dump(__METHOD__.' '.__LINE__);
-		\Zend\Debug\Debug::dump($product);
-
+		$this->redirect()->toRoute('product');
 		return $view;
 	}
 
 	public function editAction ()
 	{
 		$form = new CreateProduct();
-		$product = new Product();
+		$product = $this->getServiceLocator()->get('Product\Entity\Product');
 		$form->bind($product);
 
 		// action viewscript
@@ -106,12 +123,37 @@ class ManageController extends AbstractActionController
 			$product->setBrand($brand);
 
 			// get the categories
-			$categoryIds = explode(",", $product->getCategories());
+			$categoryIds = explode(",", $product->getCategoryIds());
 			$categories = $this->getCategoryTable()->getAllByCategoryId($categoryIds);
 			$product->setCategories($categories);
 
 			$form->bind($product);
 		}
+
+		// do Post/Redirect/Get (PRG) strategy to stop user refresh/back button
+		$prg = $this->prg($this->getRequest()->getRequestUri(), true);
+		if ($prg instanceof Response) {
+			return $prg;
+		}
+
+		// this is when the user first arrives to this url, display the form
+		else if ($prg === false) {
+			return $view;
+		}
+
+		// lets retrieve the post data stored in the PRG session
+		$post = $prg;
+
+		// validate the form
+		$form->setData($post);
+		if(!$form->isValid())
+			return $view;
+
+
+		\Zend\Debug\Debug::dump(__METHOD__.' '.__LINE__);
+		\Zend\Debug\Debug::dump($post);
+		\Zend\Debug\Debug::dump($product);
+
 
 		return $view;
 	}

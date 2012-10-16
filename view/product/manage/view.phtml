@@ -1,0 +1,21 @@
+<?php
+$title = ucwords($product->name);
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title) ?></h1>
+
+<a class="button" href="<?php echo $this->url('product', array('action'=>'edit','id'=>$product->product_id));?>">Edit product</a>
+<dl class="ruled">
+	<dt><?php echo $this->translate('Product Name') ?></dt>
+		<dd><?php echo $this->escapeHtml($product->name) ?></dd>
+	<dt><?php echo $this->translate('Price') ?></dt>
+		<dd><?php echo $this->escapeHtml($product->price) ?></dd>
+	<dt><?php echo $this->translate('Brand') ?></dt>
+		<dd><?php echo $product->brand->name; ?></dd>
+	<dt><?php echo $this->translate('Categories') ?></dt>
+		<dd>
+			<?php foreach ($product->categories as $category): ?>
+			<?php echo $category->name; ?><br>
+			<?php endforeach; ?>
+		</dd>
+</dl>
