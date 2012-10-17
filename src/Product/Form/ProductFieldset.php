@@ -5,7 +5,6 @@ namespace Product\Form;
 use Product\Entity\Product;
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
 use Zend\Stdlib\Hydrator\ArraySerializable as ArraySerializableHydrator;
 
 class ProductFieldset extends Fieldset implements InputFilterProviderInterface
